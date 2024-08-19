@@ -1,7 +1,9 @@
 # Тестовое задание в автотестирование (tensor)
 
-### Текущий статус тестов на Github Actions:
+### autotests on Github Actions:
 [![Tests](https://github.com/ultimkorea/autotest/actions/workflows/autotests.yml/badge.svg)](https://github.com/ultimkorea/autotest/actions/workflows/autotests.yml)
+### allure-reports on Github Pages
+https://ultimkorea.github.io/autotest/ (не успел разобраться с джобой: когда один из тестов = Failed, пока они в историю не пишутся)
 
 ### Установка и запуск тестов
 1. Склонировать репозиторий
@@ -11,3 +13,5 @@
 Дополнительно доступно построение отчетов в Allure.
 1. Выполнить: `pytest --allure-dir=/path/to/reports`
 2. Для просмотра отчетов: `allure serve /path/to/reports`
+
+
