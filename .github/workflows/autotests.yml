@@ -46,7 +46,7 @@ jobs:
       - run: mkdir old_pages pages_history && unzip pages.zip -d old_pages && tar -xvf old_pages/artifact.tar -C pages_history
       - run: cp pages_history/history/* allure-results && cp -r pages_history/history allure-results
       - name: Store allure history
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: allure-results
           path:
@@ -69,7 +69,7 @@ jobs:
     - name: Install Dependencies
       run: pip install -r requirements.txt
     - name: Download all workflow run artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v3
     - name: Run all tests
       run: pytest --alluredir=allure-results
     - name: save allure results
@@ -112,7 +112,7 @@ jobs:
       - name: download artefacts
         uses: actions/download-artifact@v4
       - name: upload artifact pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
       - name: deploy pages
         id: deployment
         uses: actions/deploy-pages@v4
