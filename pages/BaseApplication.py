@@ -13,7 +13,6 @@ class BasePage:
             self.default_path = path
             self.file_name = ''
 
-
     def page_load(self):
         return self.driver.execute_script("return document.readyState === 'complete'")
 
@@ -22,14 +21,15 @@ class BasePage:
          для этого обернул поиск элемента в try/except;
           update: в третьем сценарии еще стреляет ElementClickInterceptedException"""
         try:
-            res = WebDriverWait(self.driver, time).until(EC.element_to_be_clickable(locator),
+            res = WebDriverWait(self.driver, time).until(EC.visibility_of_element_located(locator),
                                                       message=f"Не удалось найти элемент с локатором: {locator}")
             #self.reporter.log_step(f'Найден элемент по локатору: "{locator}"')
             # иногда нужные элементы скрываются за предупреждением о куках в футере страницы
             # поэтому скролим до появления
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", res)
+            if not res.is_displayed():
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", res)
             return res
-        except (StaleElementReferenceException, ElementClickInterceptedException):
+        except StaleElementReferenceException:
             if count == 3:
                 raise StaleElementReferenceException(f'Не удалось найти элемент по локатору {locator} после 3 попыток ')
             count += 1
