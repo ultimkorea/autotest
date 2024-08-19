@@ -9,9 +9,55 @@ permissions:
   pages: write
 
 jobs:
+  history-update:
+    runs-on: ubuntu-latest
+    name: download history
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: > 
+          ART_ID=$(curl -L
+          -H "Accept: application/vnd.github+json"
+          -H "X-GitHub-Api-Version: 2022-11-28"
+          "https://api.github.com/repos/ultimkorea/autotest/actions/artifacts?name=allure-results" |
+          python -c "import sys, json; print(json.load(sys.stdin)['artifacts'][0]['id']);")
+          && 
+          curl -L 
+          -H "Accept: application/vnd.github+json" 
+          -H "Authorization: Bearer ${{ secrets.TOKEN }}" 
+          -H "X-GitHub-Api-Version: 2022-11-28" 
+          https://api.github.com/repos/ultimkorea/autotest/actions/artifacts/$ART_ID/zip 
+          -o artifacts.zip
+          &&
+          REPORT_ID=$(curl -L 
+          -H "Accept: application/vnd.github+json" 
+          -H "X-GitHub-Api-Version: 2022-11-28" 
+          "https://api.github.com/repos/ultimkorea/autotest/actions/artifacts?name=github-pages" 
+          | python -c "import sys, json; print(json.load(sys.stdin)['artifacts'][0]['id']);") 
+          &&
+          curl -L 
+          -H "Accept: application/vnd.github+json" 
+          -H "Authorization: Bearer ${{ secrets.TOKEN }}" 
+          -H "X-GitHub-Api-Version: 2022-11-28" 
+          https://api.github.com/repos/ultimkorea/autotest/actions/artifacts/$REPORT_ID/zip 
+          -o pages.zip
+      - run: mkdir allure-results && unzip artifacts.zip -d allure-results
+      - run: mkdir old_pages pages_history && unzip pages.zip -d old_pages && tar -xvf old_pages/artifact.tar -C pages_history
+      - run: cp pages_history/history/* allure-results && cp -r pages_history/history allure-results
+      - name: Store allure history
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path:
+            allure-results
+          retention-days: 1
+
+
+
   tests:
     runs-on: ubuntu-latest
-
+    needs: history-update
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
@@ -22,6 +68,8 @@ jobs:
       run: sudo apt-get install google-chrome-stable
     - name: Install Dependencies
       run: pip install -r requirements.txt
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v3
     - name: Run all tests
       run: pytest --alluredir=allure_results
     - name: save allure results
