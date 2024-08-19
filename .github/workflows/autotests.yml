@@ -54,6 +54,8 @@ jobs:
   publish-report:
     runs-on: ubuntu-latest
     needs: make-report
+    permissions:
+      id-token: write
     name: Publication report
     steps:
       - name: download artefacts
