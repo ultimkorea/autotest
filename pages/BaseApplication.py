@@ -18,7 +18,7 @@ class BasePage:
         return self.driver.execute_script("return document.readyState === 'complete'")
 
     def find_element(self, locator, time=5, count=1):
-        """ Иногда падаем с ошибкой StaleElementReference и/и
+        """ Иногда падаем с ошибкой StaleElementReference и/и ElementClickInterceptedException
          для этого обернул поиск элемента в try/except;
           update: в третьем сценарии еще стреляет ElementClickInterceptedException"""
         try:
@@ -28,13 +28,13 @@ class BasePage:
             return res
         except (StaleElementReferenceException, ElementClickInterceptedException):
             if count == 3:
-                raise StaleElementReferenceException(f'Не удалось найти элемент по локатору {locator} ')
+                raise StaleElementReferenceException(f'Не удалось найти элемент по локатору {locator} после 3 попыток ')
             count += 1
-            self.find_element(locator, time, count)
+            return self.find_element(locator, time, count)
 
     def find_elements(self, locator, time=5, count=0):
         res = WebDriverWait(self.driver, time).until(EC.presence_of_all_elements_located(locator),
-                                                    message=f"Не удалось найти элементы по локатору: {locator}, осталось попыток: {count}")
+                                                    message=f"Не удалось найти элементы по локатору: {locator}")
         #self.reporter.log_step(f'Найдены элементы по локатору: "{locator}"')
         return res
 
@@ -44,14 +44,8 @@ class BasePage:
         #self.reporter.log_step(f'Найден элемент по локатору: {locator}')
         return res
 
-    def waiting_element_be_invisible(self, locator, time=5):
-        res = WebDriverWait(self.driver, time).until(EC.invisibility_of_element_located(locator),
-                                                  message=f"Не удалось дождаться исчезновения элемента с локатором: {locator}")
-        return res
-
-    def waiting_element_be_visible(self, locator, time=5):
-        return WebDriverWait(self.driver, time).until(EC.visibility_of_element_located(locator),
-                                                      message=f"Не удалось дождаться появления элемента с локатором: {locator}")
+    def wait_until(self, condition, time=5):
+        WebDriverWait(self.driver, time).until(condition)
 
     @property
     def current_url(self):

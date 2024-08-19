@@ -19,7 +19,7 @@ def test_check_width_height_of_images(browser, reporter):
 
     sbis_page.findclick_readmore_button()
 
-    assert sbis_page.check_current_url
+    assert sbis_page.check_current_url, 'Текущий url не соответствует sbis.ru/about'
     reporter.log_step(f'#Проверка: текущий URL == sbis.ru/about')
 
     assert sbis_page.check_width_height_of_images(sbis_page.images)
