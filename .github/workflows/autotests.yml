@@ -36,6 +36,7 @@ jobs:
         with:
           distribution: 'microsoft'
           java-version: '21'
+      - run: sudo curl -sLo allure_2.30.0-1_all.deb https://github.com/allure-framework/allure2/releases/download/2.30.0/allure_2.30.0-1_all.deb
       - run: sudo dpkg -i allure_2.30.0-1_all.deb
       - name: download artefacts
         uses: actions/download-artifact@v4
