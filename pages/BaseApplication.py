@@ -25,6 +25,9 @@ class BasePage:
             res = WebDriverWait(self.driver, time).until(EC.element_to_be_clickable(locator),
                                                       message=f"Не удалось найти элемент с локатором: {locator}")
             #self.reporter.log_step(f'Найден элемент по локатору: "{locator}"')
+            # иногда нужные элементы скрываются за предупреждением о куках в футере страницы
+            # поэтому скролим до появления
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", res)
             return res
         except (StaleElementReferenceException, ElementClickInterceptedException):
             if count == 3:
