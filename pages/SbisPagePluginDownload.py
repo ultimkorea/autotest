@@ -43,12 +43,14 @@ class SbisPluginDownloader(BasePage):
         return file_size
 
 
-    def download_file(self):
+    def download_file(self, repeat = False):
         url = self.download_link
         response = requests.get(url)
 
         if response.status_code != 200:
             # попробуем еще один раз скачать, если не получится - рейзим исключение
+            if not repeat:
+                self.download_file(repeat=True)
             raise Exception(f'status_code = {response.status_code}, запрос выполнен с ошибкой')
 
         self.file_name = self.default_path+'sbis-plugin.exe'

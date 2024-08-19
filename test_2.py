@@ -1,7 +1,7 @@
 from pages.SbisPageRegion import SbisPageRegion
 
 
-def test_checkRegionPartners(browser, reporter):
+def test_check_region_partner(browser, reporter):
     """
     Тестовое задание СБИС (Автотестирование) №2
     1. Проверка текущего региона (МОСКВА)

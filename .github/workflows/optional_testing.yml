@@ -1,0 +1,38 @@
+name: Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: Choose test
+        required: true
+        default:
+        type: choice
+        options:
+          - test_01
+          - test_02
+          - test_03
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Chrome
+      run: sudo apt-get install google-chrome-stable
+    - name: Install Dependencies
+      run: pip install -r requirements.txt
+    - name: test_01
+      if: "github.events.inputs.deployment_target == 'test_01'"
+      run: pytest test_1
+    - name: test_02
+      if: "github.events.inputs.deployment_target == 'test_02'"
+      run: pytest test_2
+    - name: test_03
+      if: "github.events.inputs.deployment_target == 'test_03'"
+      run: pytest test_3
