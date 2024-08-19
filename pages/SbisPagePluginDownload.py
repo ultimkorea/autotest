@@ -36,30 +36,27 @@ class SbisPluginDownloader(BasePage):
 
         return False
 
-    @property
-    def plugin_fact_size(self):
+
+    def plugin_fact_size(self, filesize):
         """ Переводим байты в мегабайты, округляем до 2 точек после запятой """
-        file_size = round(os.path.getsize(self.file_name) / (1024 * 1024), 2)
+        file_size = round(filesize / (1024 * 1024), 2)
         return file_size
 
-
-    def download_file(self, repeat = False):
+    def get_filesize_from_head_request(self):
         url = self.download_link
-        response = requests.get(url)
+        pre_response = requests.head(url)
+        st_code = pre_response.status_code
+        if st_code == 302:
+            response = requests.head(pre_response.headers['Location'])
+            if response.status_code == 200:
+                file_size = int(response.headers['Content-Length'])
+        elif st_code == 200:
+            # если вдруг нет редиректа
+            file_size = int(pre_response.headers['Content-Length'])
+        else:
+            raise Exception(f'Status code == {st_code}, ошибка выполнения запроса')
 
-        if response.status_code != 200:
-            # попробуем еще один раз скачать, если не получится - рейзим исключение
-            if not repeat:
-                self.download_file(repeat=True)
-            raise Exception(f'status_code = {response.status_code}, запрос выполнен с ошибкой')
-
-        self.file_name = self.default_path+'sbis-plugin.exe'
-        self.save_file(self.file_name, response.content)
-
-    def save_file(self, file_name, file):
-        with open(file_name, 'wb') as f:
-            f.write(file)
-            self.file_name = file_name
+        return file_size
 
 
 

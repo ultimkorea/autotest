@@ -26,16 +26,4 @@ def reporter():
     return reporter
 
 
-@allure.title("init: create/delete temp directory")
-@pytest.fixture()
-def filesystem():
-    dir_name = 'temp/'
-    if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
-    yield dir_name
-    for file in os.listdir(f'{dir_name}'):
-        os.remove(f'{dir_name}{file}')
-    os.rmdir(dir_name)
-
-
 
