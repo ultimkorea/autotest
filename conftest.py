@@ -12,18 +12,8 @@ def browser():
     options = Options()
     options.add_argument('--headless')
 
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome()
     driver.implicitly_wait(10)
 
     yield driver
     driver.quit()
-
-
-@allure.title("init: allure-reporter")
-@pytest.fixture()
-def reporter():
-    reporter = Report()
-    return reporter
-
-
-

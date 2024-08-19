@@ -1,7 +1,7 @@
-from pages.SbisPageImages import SbisPageImages
+from pages.sbis_page import SbisHome, SbisContacts
+from pages.tensor_page import TensorHome, TensorAbout
 
-
-def test_check_width_height_of_images(browser, reporter):
+def test_check_width_height_of_images(browser):
     """
     Тестовое задание СБИС (Автотестирование) №1
     1. Проверка наличия блока Сила в людях
@@ -9,18 +9,20 @@ def test_check_width_height_of_images(browser, reporter):
     3. Проверка-сравнение высоты и ширины изображений на странице /about
     """
 
-    sbis_page = SbisPageImages(browser, reporter)
-    sbis_page.open_start_url()
-    sbis_page.findclick_contacts_button()
-    sbis_page.findclick_logo_image()
+    sbisHome_page = SbisHome(browser)
+    sbisHome_page.open_start_url()
 
-    assert sbis_page.check_peoplepower_is_displayed
-    reporter.log_step(f'#Проверка: блок "Сила в людях" отображается')
+    sbis_contacs_page = sbisHome_page.findclick_contacts_button()
 
-    sbis_page.findclick_readmore_button()
+    tensor_home_page = sbis_contacs_page.findclick_logo_image()
 
-    assert sbis_page.check_current_url, 'Текущий url не соответствует sbis.ru/about'
-    reporter.log_step(f'#Проверка: текущий URL == sbis.ru/about')
+    assert tensor_home_page.check_peoplepower_is_displayed
+    tensor_home_page.reporter.log_step(f'#Проверка: блок "Сила в людях" отображается')
 
-    assert sbis_page.check_width_height_of_images(sbis_page.images)
-    reporter.log_step(f'#Проверка: ширина и высота всех изображений корректна')
+    tensor_about_page = tensor_home_page.findclick_readmore_button()
+
+    assert tensor_about_page.check_current_url('https://tensor.ru/about'), 'Текущий url не соответствует https://tensor.ru/about'
+    tensor_about_page.reporter.log_step(f'#Проверка: текущий URL == sbis.ru/about')
+
+    assert tensor_about_page.check_width_height_of_images(tensor_about_page.images)
+    tensor_about_page.reporter.log_step(f'#Проверка: ширина и высота всех изображений корректна')
