@@ -3,7 +3,7 @@
 ### autotests on Github Actions:
 [![Tests](https://github.com/ultimkorea/autotest/actions/workflows/autotests.yml/badge.svg)](https://github.com/ultimkorea/autotest/actions/workflows/autotests.yml)
 ### allure-reports on Github Pages
-https://ultimkorea.github.io/autotest/ (не успел разобраться с джобой: когда один из тестов = Failed, пока они в историю не пишутся)
+https://ultimkorea.github.io/autotest/
 
 ### Установка и запуск тестов
 1. Склонировать репозиторий
